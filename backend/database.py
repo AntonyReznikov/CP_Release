@@ -1,25 +1,24 @@
-# Модуль настройки базы данных SQLite и SQLAlchemy.
+# backend/database.py
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import os
 
-# URL подключения к SQLite базе данных
-SQLALCHEMY_DATABASE_URL = "sqlite:///./booking_system.db"
+# Читаем из .env или переменной окружения
+SQLALCHEMY_DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "sqlite:////data/booking_system.db"  # путь внутри контейнера
+)
 
-# Подключение к базе
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
     connect_args={"check_same_thread": False}
 )
 
-# Соединение с БД
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-# База для ORM моделей
 Base = declarative_base()
 
-# Генератор для получения сессии базы данных
 def get_db():
     db = SessionLocal()
     try:

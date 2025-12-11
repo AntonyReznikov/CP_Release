@@ -3,7 +3,7 @@
 
 from sqlalchemy import Column, Integer, String, Date, Time, ForeignKey
 from sqlalchemy.orm import relationship
-from database import Base
+from backend.database import Base
 
 # Модель сотрудников
 class Employee(Base):

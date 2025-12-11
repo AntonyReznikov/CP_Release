@@ -1,0 +1,15 @@
+# FastAPI и зависимости (последние совместимые версии)
+fastapi>=0.115.0
+uvicorn>=0.32.0
+python-multipart>=0.0.9
+
+# Database
+sqlalchemy>=2.0.35
+
+# Pydantic для валидации (с поддержкой email)
+pydantic>=2.10.0
+pydantic-settings>=2.6.0
+email-validator>=2.2.0
+
+# Для работы с датой и временем
+python-dateutil>=2.9.0

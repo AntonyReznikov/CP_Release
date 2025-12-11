@@ -1,67 +1,60 @@
-# Главный модуль FastAPI приложения
-# Настройка и запуск веб-сервера API
+# backend/main.py
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from database import engine, Base
-from routers import employees, resources, bookings
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from backend.database import engine, Base
+from backend.routers import employees, resources, bookings
+import os
 
-# Создание таблиц в БД
+# Создание таблиц
 Base.metadata.create_all(bind=engine)
 
-# Создание приложения
+# Приложение
 app = FastAPI(
     title="Booking System API",
-    description="API для системы бронирования офисных ресурсов (переговорных комнат и оборудования)",
+    description="API для системы бронирования офисных ресурсов",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
 )
 
-# Настройка CORS для работы с фронтендом (безопасность)
+# CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"], 
+    allow_headers=["*"],
 )
 
-# Подключение роутеров
-app.include_router(employees.router)
-app.include_router(resources.router)
-app.include_router(bookings.router)
+# Роутеры API
+app.include_router(employees.router, prefix="/employees")
+app.include_router(resources.router, prefix="/resources")
+app.include_router(bookings.router, prefix="/bookings")
 
-# Корневой эндпоинт 
-# Возвращает приветственное сообщение и ссылки на документацию.
-@app.get("/", tags=["Root"])
-def read_root():
-    return {
-        "message": "Booking System API",
-        "version": "1.0.0",
-        "docs": "/docs",
-        "redoc": "/redoc",
-        "endpoints": {
-            "employees": "/employees",
-            "resources": "/resources",
-            "bookings": "/bookings",
-            "reports": "/bookings/report/resource_usage"
-        }
-    }
+# Путь к фронтенду
+FRONTEND_PATH = "/app/frontend"
+os.makedirs(FRONTEND_PATH, exist_ok=True)
 
+# Статика
+app.mount("/static", StaticFiles(directory=FRONTEND_PATH), name="static")
 
-# Эндпоинт получения состояния API
-@app.get("/health", tags=["Health"])
+# SPA: главная страница
+@app.get("/")
+async def serve_frontend():
+    return FileResponse(f"{FRONTEND_PATH}/index.html")
+
+# SPA: fallback для роутинга
+@app.get("/{full_path:path}")
+async def serve_spa(full_path: str):
+    file_path = f"{FRONTEND_PATH}/{full_path}"
+    if os.path.exists(file_path) and os.path.isfile(file_path):
+        return FileResponse(file_path)
+    return FileResponse(f"{FRONTEND_PATH}/index.html")
+
+# Health check
+@app.get("/health")
 def health_check():
     return {"status": "healthy"}
-
-
-if __name__ == "__main__":
-    import uvicorn
-    # Запуск сервера
-    uvicorn.run(
-        "main:app",
-        host="127.0.0.1",
-        port=8000,
-        reload=True  # Автоматическая перезагрузка при изменении кода
-    )

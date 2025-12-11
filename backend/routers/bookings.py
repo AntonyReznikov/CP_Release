@@ -6,9 +6,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 
-from database import get_db
-import schemas
-import crud
+from backend.database import get_db
+from backend import models
+from backend import schemas
+
 
 # Описание
 router = APIRouter(

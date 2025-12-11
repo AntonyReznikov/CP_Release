@@ -6,9 +6,12 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 
-from database import get_db
-import schemas
-import crud
+from backend.database import get_db
+from backend import models
+from backend import schemas
+from backend import crud
+
+
 
 # Описание
 router = APIRouter(
@@ -138,12 +141,12 @@ def delete_resource(
         HTTPException 400: Если у ресурса есть связанные бронирования
     """
     # Попытка удалить ресурс
-    try:
-        success = crud.delete_resource(db, resource_id=resource_id)
-        # Если безуспешно
-        if not success:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Resource not found"
-            )
+    
+    success = crud.delete_resource(db, resource_id=resource_id)
+    # Если безуспешно
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Resource not found"
+        )
     return None

@@ -5,8 +5,9 @@ from sqlalchemy.orm import Session
 from sqlalchemy import and_, func
 from datetime import date, datetime, timedelta
 from typing import List, Optional
-import models
-import schemas
+from backend import models
+from backend import schemas
+
 
 
 # Блок работников 

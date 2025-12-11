@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./booking_system.db:/data/booking_system.db
+      - ./backend:/app/backend
+      - ./frontend:/app/frontend
+    environment:
+      - DATABASE_URL=sqlite:////data/booking_system.db
+    restart: unless-stopped
