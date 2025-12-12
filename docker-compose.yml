@@ -1,12 +1,32 @@
 services:
+  # Определение сервиса "app" - основного приложения
   app:
+    # Сборка образа из Dockerfile в текущей директории
     build: .
+    
+    # Имя контейнера
+    container_name: booking_system
+    
+    # Проброс портов
     ports:
       - "8000:8000"
+    
+    # Монтирование директорий для синхронизации данных
     volumes:
-      - ./booking_system.db:/data/booking_system.db
-      - ./backend:/app/backend
-      - ./frontend:/app/frontend
+      - .:/app # Монтирование текущей директории проекта в /app внутри контейнера
+
+      - ./backend/booking_system.db:/app/backend/booking_system.db # Монтирование файла базы данных SQLite
+    
+    # Переменные окружения для контейнера
     environment:
-      - DATABASE_URL=sqlite:////data/booking_system.db
-    restart: unless-stopped
+      DATABASE_URL: "sqlite:////app/backend/booking_system.db" # URL для подключения к базе данных SQLite
+    
+    restart: unless-stopped # Политика перезапуска: всегда перезапускать, кроме случаев явной остановки
+    
+    # Команда запуска приложения внутри контейнера
+    command: >
+      uvicorn 
+      backend.main:app      # Запуск FastAPI
+      --host 0.0.0.0        # Все сетевые интерфейсы
+      --port 8000           # Порт 8000
+      --reload              # Автоматическая перезагрузка при изменениях кода 

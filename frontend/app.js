@@ -27,12 +27,10 @@ async function loadInitialData() {
 
         // Заполняем фильтры
         populateFilters();
-
-        // Скрываем баннер подключения, если всё работает
-        hideConnectionBanner();
     } catch (error) {
         showError('Ошибка загрузки данных: ' + error.message);
-        showConnectionBanner();
+        // Показываем уведомление
+        alert('Не удалось загрузить данные с сервера. Убедитесь, что бэкенд запущен на порту 8000.\n\nПодробности: ' + error.message);
     }
 }
 

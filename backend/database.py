@@ -1,14 +1,13 @@
 # backend/database.py
-
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 
-# Читаем из .env или переменной окружения
+# Путь внутри контейнера
 SQLALCHEMY_DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "sqlite:////data/booking_system.db"  # путь внутри контейнера
+    "sqlite:////app/backend/booking_system.db" 
 )
 
 engine = create_engine(

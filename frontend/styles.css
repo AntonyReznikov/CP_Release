@@ -297,26 +297,6 @@ tbody tr:last-child td {
     border: 1px solid #f5c6cb;
 }
 
-/* Баннер подключения */
-.connection-banner {
-    background: #fff3cd;
-    color: #856404;
-    border: 2px solid #ffc107;
-    padding: 15px 20px;
-    margin: 20px 30px;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    line-height: 1.6;
-}
-
-.connection-banner code {
-    background: #f5f5f5;
-    padding: 2px 6px;
-    border-radius: 3px;
-    color: #333;
-    font-family: 'Courier New', monospace;
-}
-
 /* Адаптивность */
 @media (max-width: 768px) {
     header h1 {
