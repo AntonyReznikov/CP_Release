@@ -27,37 +27,35 @@
 	o Реализовать сводную таблицу "Календарь занятости". Таблица должна выводить данные в формате: "Название Ресурса", "Дата", "Время начала", "Время окончания", "ФИО сотрудника" (кто забронировал).
 	o Реализовать сводный отчет "Загрузка ресурсов": "Название Ресурса", "Общее количество часов бронирования" за последний месяц (агрегация).
 
-## Пример работы с программой
-
-
 ## Структура проекта
 ```
 booking-system/
-├── backend/
-│   ├── main.py              # Главный файл FastAPI приложения
-│   ├── database.py          # Настройка базы данных
-│   ├── models.py            # SQLAlchemy модели
-│   ├── schemas.py           # Pydantic схемы
-│   ├── crud.py              # CRUD операции
-│   ├── routers/             # API роутеры
-│   │   ├── employees.py     # Эндпоинты для сотрудников
-│   │   ├── resources.py     # Эндпоинты для ресурсов
-│   │   └── bookings.py      # Эндпоинты для бронирований
-│   └── requirements.txt     # Python зависимости
+├── docker-compose.yml 
+├── Dockerfile
+├── requirements.txt
+├── app/
+│   ├── main.py              
+│   ├── database.py         
+│   ├── models.py         
+│   ├── schemas.py        
+│   ├── crud.py        
+│   ├── routers/          
+│       ├── employees.py   
+│       ├── resources.py    
+│       └── bookings.py    
 │
 ├── frontend/
-│   ├── index.html           # Главная страница
-│   ├── styles.css           # Стили интерфейса
-│   ├── api.js               # API клиент
-│   └── app.js               # Логика приложения
+│   ├── index.html         
+│   ├── styles.css          
+│   ├── api.js               
+│   └── app.js               
 │
-└── README.md                # Эта документация
+└── README.md                
 ```
 
 ## Предварительные требования
 
 - **Python 3.10 или выше** ([скачать](https://www.python.org/downloads/))
-- **Современный веб-браузер** (Chrome, Firefox, Edge)
 - **Docker 20.10+** ([скачать](https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe?utm_source=docker&utm_medium=webreferral&utm_campaign=dd-smartbutton&utm_location=module))
 - **Docker Compose 2.0+**
 
@@ -115,42 +113,39 @@ cd CP_Realease
 
 ## Примеры использования
 
-### Пример 1: Создание сотрудника через API
+### Пример 1: Создание сотрудника
 
-```bash
-curl -X POST "http://127.0.0.1:8000/employees/" \
--H "Content-Type: application/json" \
--d '{
-  "full_name": "Иванов Иван Иванович",
-  "email": "ivanov@company.com"
-}'
-```
+
 
 ### Пример 2: Создание ресурса
 
-```bash
-curl -X POST "http://127.0.0.1:8000/resources/" \
--H "Content-Type: application/json" \
--d '{
-  "name": "Переговорная №1 (10 этаж)",
-  "type": "комната",
-  "capacity": 8
-}'
-```
+
 
 ### Пример 3: Создание бронирования
 
-```bash
-curl -X POST "http://127.0.0.1:8000/bookings/" \
--H "Content-Type: application/json" \
--d '{
-  "resource_id": 1,
-  "employee_id": 1,
-  "date": "2025-11-14",
-  "start_time": "10:00",
-  "end_time": "11:30"
-}'
-```
+
+
+### Пример 4:  
+
+
+
+### Пример 5:  
+
+
+
+### Пример 6:  
+
+
+
+### Swager
+
+
+
+### Swager (schemas)
+
+
+
+
 
 ## База данных
 
@@ -162,11 +157,18 @@ curl -X POST "http://127.0.0.1:8000/bookings/" \
 - **resources** - Ресурсы (id, name, type, capacity)
 - **bookings** - Бронирования (id, resource_id, employee_id, date, start_time, end_time)
 
+## Остановка системы
+Остановка контейнеров
+```docker compose down```
+
+Остановка с удалением volumes
+```docker compose down -v```
+
 ### Технологии
 
     Backend: FastAPI, Python
 
-    База данных: MySQL
+    База данных: SQLite
 
     Frontend: HTML, JavaScript
 
