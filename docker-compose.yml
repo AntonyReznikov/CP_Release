@@ -26,7 +26,7 @@ services:
     # Команда запуска приложения внутри контейнера
     command: >
       uvicorn 
-      backend.main:app      # Запуск FastAPI
-      --host 0.0.0.0        # Все сетевые интерфейсы
-      --port 8000           # Порт 8000
-      --reload              # Автоматическая перезагрузка при изменениях кода 
+      backend.main:app      
+      --host 0.0.0.0        
+      --port 8000           
+      --reload              

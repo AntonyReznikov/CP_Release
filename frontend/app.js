@@ -1,20 +1,26 @@
+
 // Главный файл приложения с логикой интерфейса
 
 // Глобальное состояние
 let currentEmployees = [];
 let currentResources = [];
 let currentBookings = [];
+let filteredBookings = [];
 
 // ==================== Инициализация ====================
 
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('Приложение загружено');
 
+    // Устанавливаем сегодняшнюю дату по умолчанию в фильтр
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('dateFilter').value = today;
+
     // Загружаем начальные данные
     await loadInitialData();
 
-    // Загружаем бронирования
-    await loadAllBookings();
+    // Загружаем бронирования для сегодняшней даты
+    await loadFilteredBookings();
 });
 
 // Загрузка начальных данных
@@ -29,7 +35,6 @@ async function loadInitialData() {
         populateFilters();
     } catch (error) {
         showError('Ошибка загрузки данных: ' + error.message);
-        // Показываем уведомление
         alert('Не удалось загрузить данные с сервера. Убедитесь, что бэкенд запущен на порту 8000.\n\nПодробности: ' + error.message);
     }
 }
@@ -59,7 +64,7 @@ function showTab(tabName) {
     // Загружаем данные для секции
     switch (tabName) {
         case 'bookings':
-            loadAllBookings();
+            loadFilteredBookings();
             break;
         case 'resources':
             loadResources();
@@ -78,49 +83,68 @@ function showTab(tabName) {
 async function loadAllBookings() {
     try {
         currentBookings = await api.bookings.getAll();
-        renderBookingsTable(currentBookings);
+        filteredBookings = [...currentBookings];
+        renderBookingsTable(filteredBookings);
     } catch (error) {
         showError('Ошибка загрузки бронирований: ' + error.message);
     }
 }
 
-async function loadTodayBookings() {
+async function loadFilteredBookings() {
     try {
-        currentBookings = await api.bookings.getToday();
-        renderBookingsTable(currentBookings);
+        await loadAllBookings(); // Сначала загружаем все бронирования
+        
+        const dateFilter = document.getElementById('dateFilter').value;
+        const resourceFilter = document.getElementById('resourceFilter').value;
+        const employeeFilter = document.getElementById('employeeFilter').value;
+        
+        // Применяем фильтры
+        filteredBookings = currentBookings.filter(booking => {
+            // Фильтр по дате
+            if (dateFilter && booking.date !== dateFilter) {
+                return false;
+            }
+            
+            // Фильтр по ресурсу
+            if (resourceFilter && booking.resource_id !== parseInt(resourceFilter)) {
+                return false;
+            }
+            
+            // Фильтр по сотруднику
+            if (employeeFilter && booking.employee_id !== parseInt(employeeFilter)) {
+                return false;
+            }
+            
+            return true;
+        });
+        
+        renderBookingsTable(filteredBookings);
     } catch (error) {
         showError('Ошибка загрузки бронирований: ' + error.message);
     }
+}
+
+async function filterByDate() {
+    await loadFilteredBookings();
 }
 
 async function filterByResource() {
-    const resourceId = document.getElementById('resourceFilter').value;
-    if (!resourceId) {
-        await loadAllBookings();
-        return;
-    }
-
-    try {
-        currentBookings = await api.bookings.getByResource(resourceId);
-        renderBookingsTable(currentBookings);
-    } catch (error) {
-        showError('Ошибка фильтрации: ' + error.message);
-    }
+    await loadFilteredBookings();
 }
 
 async function filterByEmployee() {
-    const employeeId = document.getElementById('employeeFilter').value;
-    if (!employeeId) {
-        await loadAllBookings();
-        return;
-    }
+    await loadFilteredBookings();
+}
 
-    try {
-        currentBookings = await api.bookings.getByEmployee(employeeId);
-        renderBookingsTable(currentBookings);
-    } catch (error) {
-        showError('Ошибка фильтрации: ' + error.message);
-    }
+function resetFilters() {
+    // Сбрасываем все фильтры к значениям по умолчанию
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('dateFilter').value = today;
+    document.getElementById('resourceFilter').value = '';
+    document.getElementById('employeeFilter').value = '';
+    
+    // Загружаем бронирования с сброшенными фильтрами
+    loadFilteredBookings();
 }
 
 function renderBookingsTable(bookings) {
@@ -241,6 +265,10 @@ function renderReportTable(report) {
 
 function showCreateBookingForm() {
     const modalBody = document.getElementById('modalBody');
+    
+    // Устанавливаем сегодняшнюю дату по умолчанию
+    const today = new Date().toISOString().split('T')[0];
+    
     modalBody.innerHTML = `
         <h2>Новое бронирование</h2>
         <form id="bookingForm" onsubmit="handleCreateBooking(event)">
@@ -260,15 +288,15 @@ function showCreateBookingForm() {
             </div>
             <div class="form-group">
                 <label>Дата</label>
-                <input type="date" name="date" required>
+                <input type="date" name="date" value="дд:мм:гггг" required>
             </div>
             <div class="form-group">
                 <label>Время начала</label>
-                <input type="time" name="start_time" required>
+                <input type="time" name="start_time" value="--:--" required>
             </div>
             <div class="form-group">
                 <label>Время окончания</label>
-                <input type="time" name="end_time" required>
+                <input type="time" name="end_time" value="--:--" required>
             </div>
             <div class="form-actions">
                 <button type="button" class="btn btn-secondary" onclick="closeModal()">Отмена</button>
@@ -344,7 +372,7 @@ async function handleCreateBooking(event) {
         await api.bookings.create(data);
         showSuccess('Бронирование создано');
         closeModal();
-        await loadAllBookings();
+        await loadFilteredBookings();
     } catch (error) {
         showError('Ошибка создания бронирования: ' + error.message);
     }
@@ -397,7 +425,7 @@ async function deleteBooking(id) {
     try {
         await api.bookings.delete(id);
         showSuccess('Бронирование удалено');
-        await loadAllBookings();
+        await loadFilteredBookings();
     } catch (error) {
         showError('Ошибка удаления: ' + error.message);
     }
@@ -467,18 +495,4 @@ function showSuccess(message) {
 
 function showError(message) {
     alert('✗ ' + message);
-}
-
-function showConnectionBanner() {
-    const banner = document.getElementById('connectionBanner');
-    if (banner) {
-        banner.style.display = 'block';
-    }
-}
-
-function hideConnectionBanner() {
-    const banner = document.getElementById('connectionBanner');
-    if (banner) {
-        banner.style.display = 'none';
-    }
 }
