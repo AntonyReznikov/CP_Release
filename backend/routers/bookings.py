@@ -45,7 +45,7 @@ def create_booking(
     if booking.end_time <= booking.start_time:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="End time must be after start time"
+            detail="Время завершения должно быть после времени начала"
         )
 
     # Проверка существования ресурса
@@ -53,7 +53,7 @@ def create_booking(
     if not db_resource:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Resource not found"
+            detail="Ресурс не найден"
         )
 
     # Проверка существования сотрудника
@@ -61,7 +61,7 @@ def create_booking(
     if not db_employee:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Employee not found"
+            detail="Сотрудник не найден"
         )
 
     # Проверка на пересечение бронирований
@@ -74,7 +74,7 @@ def create_booking(
     ):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="Resource is already booked for this time slot"
+            detail="Ресурс уже забронирован на выбранный промежуток времени"
         )
 
     return crud.create_booking(db=db, booking=booking)
@@ -141,7 +141,7 @@ def read_bookings_by_resource(
     if not db_resource:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Resource not found"
+            detail="Ресурс не найден"
         )
 
     bookings = crud.get_bookings_by_resource(db, resource_id=resource_id)
@@ -171,7 +171,7 @@ def read_bookings_by_employee(
     if not db_employee:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Employee not found"
+            detail="Сотрудник не найден"
         )
 
     bookings = crud.get_bookings_by_employee(db, employee_id=employee_id)
@@ -201,7 +201,7 @@ def read_booking(
     if db_booking is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Booking not found"
+            detail="Бронирование не найдено"
         )
     return db_booking
 
@@ -233,7 +233,7 @@ def update_booking(
     if not db_booking:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Booking not found"
+            detail="Бронирование не найдено"
         )
 
     # Определяем финальные значения для проверки
@@ -246,7 +246,7 @@ def update_booking(
     if end_time <= start_time:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="End time must be after start time"
+            detail="Время завершения должно быть после времени начала"
         )
 
     # Проверка на пересечение с другими бронированиями (исключая текущее)
@@ -260,7 +260,7 @@ def update_booking(
     ):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="Resource is already booked for this time slot"
+            detail="Ресурс уже забронирован на выбранный промежуток времени"
         )
 
     db_booking = crud.update_booking(db, booking_id=booking_id, booking=booking)
@@ -288,7 +288,7 @@ def delete_booking(
     if not success:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Booking not found"
+            detail="Бронирование не найдено"
         )
     return None
 

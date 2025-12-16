@@ -32,17 +32,29 @@
             <!-- Фильтры -->
             <div class="filters">
                 <div class="form-group" style="margin: 0; min-width: 200px;">
-                    <label style="font-size: 0.9rem; margin-bottom: 5px;">Дата</label>
+                    <label style="font-size: 0.9rem; margin-bottom: 5px; display: block;">Дата</label>
                     <input type="date" id="dateFilter" class="filter-select" style="padding: 10px;" onchange="filterByDate()">
                 </div>
-                <select id="resourceFilter" class="filter-select" onchange="filterByResource()">
-                    <option value="">Все ресурсы</option>
-                </select>
-                <select id="employeeFilter" class="filter-select" onchange="filterByEmployee()">
-                    <option value="">Все сотрудники</option>
-                </select>
-                <button class="btn btn-secondary" onclick="resetFilters()">Сбросить фильтр</button>
-            </div>
+            
+                <div class="form-group" style="margin: 0; min-width: 200px;">
+                    <label for="resourceFilter" style="font-size: 0.9rem; margin-bottom: 5px; display: block;">Ресурс</label>
+                    <select id="resourceFilter" class="filter-select" onchange="filterByResource()">
+                        <option value="">Все ресурсы</option>
+                    </select>
+                </div>
+            
+                <div class="form-group" style="margin: 0; min-width: 200px;">
+                    <label for="employeeFilter" style="font-size: 0.9rem; margin-bottom: 5px; display: block;">Сотрудник</label>
+                    <select id="employeeFilter" class="filter-select" onchange="filterByEmployee()">
+                        <option value="">Все сотрудники</option>
+                    </select>
+                </div>
+            
+                <div class="form-group" style="margin: 0; min-width: 200px;">
+                    <label style="font-size: 0.9rem; margin-bottom: 5px; display: block;">&nbsp;</label>
+                    <button class="btn btn-secondary" onclick="resetFilters()">Сбросить фильтр</button>
+                </div>
+        </div>
 
             <!-- Таблица бронирований -->
             <div class="table-container">
